@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import type {
   CreateProductData,
   PaginatedResult,
@@ -16,10 +21,19 @@ import {
 } from './productsApi'
 import { productQueryKeys } from './productQueryKeys'
 
-export function useProductsQuery(params: ProductListParams) {
+type ProductsQueryOptions = {
+  enabled?: boolean
+}
+
+export function useProductsQuery(
+  params: ProductListParams,
+  options: ProductsQueryOptions = {},
+) {
   return useQuery<PaginatedResult<Product>, ApiError>({
     queryKey: productQueryKeys.list(params),
     queryFn: ({ signal }) => getProducts(params, signal),
+    placeholderData: keepPreviousData,
+    enabled: options.enabled ?? true,
   })
 }
 
