@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
-import { Alert } from '../../../shared/components/Alert'
 import { LoadingState } from '../../../shared/components/LoadingState'
 import { getProductReturnPath } from '../../../shared/utils/navigationState'
 import {
@@ -9,6 +8,7 @@ import {
   useUpdateProductMutation,
 } from '../api/productQueries'
 import { ProductForm } from '../components/ProductForm'
+import { ProductErrorState } from '../components/ProductErrorState'
 import { isProductCategory } from '../constants/productCategories'
 import type { ProductFormData } from '../schemas/productSchema'
 import '../styles/products.css'
@@ -25,7 +25,7 @@ export function ProductEditPage() {
 
   if (productId === null) {
     return (
-      <InvalidProductState
+      <ProductErrorState
         title="Produto inválido"
         message="O endereço informado não possui um identificador de produto válido."
         returnPath={returnPath}
@@ -41,7 +41,7 @@ export function ProductEditPage() {
     const notFound = productQuery.error.status === 404
 
     return (
-      <InvalidProductState
+      <ProductErrorState
         title={notFound ? 'Produto não encontrado' : 'Não foi possível carregar o produto'}
         message={notFound ? 'O produto pode ter sido excluído.' : productQuery.error.message}
         returnPath={returnPath}
@@ -54,7 +54,7 @@ export function ProductEditPage() {
 
   if (!isProductCategory(product.category)) {
     return (
-      <InvalidProductState
+      <ProductErrorState
         title="Categoria não reconhecida"
         message="Este produto possui uma categoria que não pode ser editada pela aplicação."
         returnPath={returnPath}
@@ -107,43 +107,6 @@ export function ProductEditPage() {
         cancelState={{ from: returnPath }}
         onSubmit={handleSubmit}
       />
-    </section>
-  )
-}
-
-type InvalidProductStateProps = {
-  title: string
-  message: string
-  returnPath: string
-  onRetry?: () => void
-}
-
-function InvalidProductState({
-  title,
-  message,
-  returnPath,
-  onRetry,
-}: InvalidProductStateProps) {
-  return (
-    <section className="product-page">
-      <Alert
-        title={title}
-        tone="error"
-        action={
-          <div className="inline-actions">
-            {onRetry ? (
-              <button className="button button--secondary" type="button" onClick={onRetry}>
-                Tentar novamente
-              </button>
-            ) : null}
-            <Link className="button button--secondary" to={returnPath}>
-              Voltar aos produtos
-            </Link>
-          </div>
-        }
-      >
-        <p>{message}</p>
-      </Alert>
     </section>
   )
 }

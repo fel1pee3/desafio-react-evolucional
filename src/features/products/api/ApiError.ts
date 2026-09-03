@@ -23,7 +23,3 @@ export class ApiError extends Error {
     this.status = status
   }
 }
-
-export function isApiError(error: unknown): error is ApiError {
-  return error instanceof ApiError
-}

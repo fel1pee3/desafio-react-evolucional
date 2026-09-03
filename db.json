@@ -173,7 +173,7 @@
       "categoria": "Perifericos",
       "preco": 120,
       "estoque": 20,
-      "ativo": true,
+      "ativo": false,
       "id": 23
     }
   ]

@@ -21,3 +21,7 @@ export const PRODUCT_CATEGORY_LABELS: Record<ProductCategory, string> = {
 export function isProductCategory(value: string): value is ProductCategory {
   return PRODUCT_CATEGORIES.some((category) => category === value)
 }
+
+export function getProductCategoryLabel(value: string) {
+  return isProductCategory(value) ? PRODUCT_CATEGORY_LABELS[value] : value
+}

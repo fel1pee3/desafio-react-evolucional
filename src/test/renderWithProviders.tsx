@@ -1,11 +1,13 @@
 import { QueryClientProvider, type QueryClient } from '@tanstack/react-query'
 import { render, type RenderOptions } from '@testing-library/react'
-import type { PropsWithChildren, ReactElement } from 'react'
+import type { ComponentProps, PropsWithChildren, ReactElement } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { createQueryClient } from '../app/queryClient'
 
 type RenderWithProvidersOptions = Omit<RenderOptions, 'wrapper'> & {
-  initialEntries?: string[]
+  initialEntries?: NonNullable<
+    ComponentProps<typeof MemoryRouter>['initialEntries']
+  >
   queryClient?: QueryClient
 }
 

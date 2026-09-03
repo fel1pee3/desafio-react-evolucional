@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 
-import { Alert } from '../../../shared/components/Alert'
 import { ConfirmDialog } from '../../../shared/components/ConfirmDialog'
 import { LoadingState } from '../../../shared/components/LoadingState'
 import { formatCurrency } from '../../../shared/utils/currency'
@@ -12,9 +11,9 @@ import {
   useProductQuery,
 } from '../api/productQueries'
 import { ProductStatusBadge } from '../components/ProductStatusBadge'
+import { ProductErrorState } from '../components/ProductErrorState'
 import {
-  isProductCategory,
-  PRODUCT_CATEGORY_LABELS,
+  getProductCategoryLabel,
 } from '../constants/productCategories'
 import '../styles/products.css'
 import { parseProductId } from '../utils/productId'
@@ -33,7 +32,7 @@ export function ProductDetailsPage() {
 
   if (productId === null) {
     return (
-      <ProductLoadError
+      <ProductErrorState
         title="Produto inválido"
         message="O endereço informado não possui um identificador de produto válido."
         returnPath={returnPath}
@@ -49,7 +48,7 @@ export function ProductDetailsPage() {
     const notFound = productQuery.error.status === 404
 
     return (
-      <ProductLoadError
+      <ProductErrorState
         title={notFound ? 'Produto não encontrado' : 'Não foi possível carregar o produto'}
         message={notFound ? 'O produto pode ter sido excluído.' : productQuery.error.message}
         returnPath={returnPath}
@@ -59,9 +58,7 @@ export function ProductDetailsPage() {
   }
 
   const product = productQuery.data
-  const category = isProductCategory(product.category)
-    ? PRODUCT_CATEGORY_LABELS[product.category]
-    : product.category
+  const category = getProductCategoryLabel(product.category)
 
   const handleDelete = async () => {
     if (deleteInFlightRef.current) {
@@ -165,43 +162,6 @@ export function ProductDetailsPage() {
         }}
         onConfirm={() => void handleDelete()}
       />
-    </section>
-  )
-}
-
-type ProductLoadErrorProps = {
-  title: string
-  message: string
-  returnPath: string
-  onRetry?: () => void
-}
-
-function ProductLoadError({
-  title,
-  message,
-  returnPath,
-  onRetry,
-}: ProductLoadErrorProps) {
-  return (
-    <section className="product-page">
-      <Alert
-        title={title}
-        tone="error"
-        action={
-          <div className="inline-actions">
-            {onRetry ? (
-              <button className="button button--secondary" type="button" onClick={onRetry}>
-                Tentar novamente
-              </button>
-            ) : null}
-            <Link className="button button--secondary" to={returnPath}>
-              Voltar aos produtos
-            </Link>
-          </div>
-        }
-      >
-        <p>{message}</p>
-      </Alert>
     </section>
   )
 }

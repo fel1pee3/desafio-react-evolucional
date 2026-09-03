@@ -16,6 +16,7 @@
   font-size: clamp(1.75rem, 5vw, 2.5rem);
   line-height: 1.15;
   letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
 }
 
 .product-filters {
@@ -161,6 +162,7 @@
   margin: 0;
   font-size: 1.0625rem;
   font-weight: 700;
+  overflow-wrap: anywhere;
 }
 
 .product-details-card__footer {

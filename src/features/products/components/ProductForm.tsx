@@ -172,7 +172,18 @@ export function ProductForm({
       </div>
 
       <div className="product-form__actions">
-        <Link className="button button--secondary" to={cancelTo} state={cancelState}>
+        <Link
+          className="button button--secondary"
+          to={cancelTo}
+          state={cancelState}
+          aria-disabled={isBusy || undefined}
+          tabIndex={isBusy ? -1 : undefined}
+          onClick={(event) => {
+            if (isBusy) {
+              event.preventDefault()
+            }
+          }}
+        >
           Cancelar
         </Link>
         <button className="button button--primary" type="submit" disabled={isBusy}>

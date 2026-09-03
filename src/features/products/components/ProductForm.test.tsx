@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -70,6 +70,55 @@ describe('ProductForm', () => {
     })
   })
 
+  it('rejects a fractional stock value', async () => {
+    const user = userEvent.setup()
+    const onSubmit = renderProductForm()
+
+    await user.type(screen.getByLabelText('Nome'), 'Produto válido')
+    await user.selectOptions(screen.getByLabelText('Categoria'), 'Audio')
+    await user.type(screen.getByLabelText('Preço'), '10')
+    await user.type(screen.getByLabelText('Estoque'), '1.5')
+    await user.click(screen.getByRole('button', { name: 'Cadastrar produto' }))
+
+    expect(
+      await screen.findByText('Estoque deve ser um número inteiro.'),
+    ).toBeInTheDocument()
+    expect(onSubmit).not.toHaveBeenCalled()
+  })
+
+  it('prevents simultaneous submissions', async () => {
+    const user = userEvent.setup()
+    let finishSubmission: (() => void) | undefined
+    const onSubmit = renderProductForm(
+      vi.fn(
+        () =>
+          new Promise<void>((resolve) => {
+            finishSubmission = resolve
+          }),
+      ),
+    )
+
+    await user.type(screen.getByLabelText('Nome'), 'Headset Pro')
+    await user.selectOptions(screen.getByLabelText('Categoria'), 'Audio')
+    await user.type(screen.getByLabelText('Preço'), '299.90')
+    await user.type(screen.getByLabelText('Estoque'), '8')
+
+    const submitButton = screen.getByRole('button', {
+      name: 'Cadastrar produto',
+    })
+    await user.click(submitButton)
+    await user.click(screen.getByRole('button', { name: 'Cadastrando…' }))
+
+    expect(onSubmit).toHaveBeenCalledOnce()
+    finishSubmission?.()
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: 'Cadastrar produto' }),
+      ).toBeEnabled()
+    })
+  })
+
   it('disables fields and actions while saving and displays an API error', () => {
     renderWithProviders(
       <ProductForm
@@ -87,5 +136,9 @@ describe('ProductForm', () => {
     )
     expect(screen.getByLabelText('Nome')).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Salvando…' })).toBeDisabled()
+    expect(screen.getByRole('link', { name: 'Cancelar' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    )
   })
 })
