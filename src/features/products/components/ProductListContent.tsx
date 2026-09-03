@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Alert } from '../../../shared/components/Alert'
 import { EmptyState } from '../../../shared/components/EmptyState'
 import { LoadingState } from '../../../shared/components/LoadingState'
@@ -17,6 +17,7 @@ type ProductListContentProps = {
   errorMessage?: string
   onRetry: () => void
   onPageChange: (page: number) => void
+  onDelete: (product: Product) => void
 }
 
 export function ProductListContent({
@@ -30,7 +31,11 @@ export function ProductListContent({
   errorMessage,
   onRetry,
   onPageChange,
+  onDelete,
 }: ProductListContentProps) {
+  const location = useLocation()
+  const returnPath = `${location.pathname}${location.search}`
+
   if (isPending) {
     return <LoadingState message="Carregando produtos..." />
   }
@@ -73,7 +78,11 @@ export function ProductListContent({
         title="Nenhum produto cadastrado"
         description="Cadastre o primeiro produto para começar a organizar o catálogo."
         action={
-          <Link className="button button--primary" to="/products/new">
+          <Link
+            className="button button--primary"
+            to="/products/new"
+            state={{ from: returnPath }}
+          >
             Novo produto
           </Link>
         }
@@ -98,7 +107,7 @@ export function ProductListContent({
         ) : null}
       </div>
 
-      <ProductTable products={result.items} />
+      <ProductTable products={result.items} onDelete={onDelete} />
       <Pagination
         page={page}
         pageSize={pageSize}

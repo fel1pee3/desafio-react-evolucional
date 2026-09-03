@@ -1,6 +1,10 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
-import { ProductPendingPage } from '../features/products/pages/ProductPendingPage'
 import { ProductListPage } from '../features/products/pages/ProductListPage'
+import {
+  ProductCreateRoute,
+  ProductDetailsRoute,
+  ProductEditRoute,
+} from '../features/products/pages/ProductRoutePages'
 import { NotFoundPage } from '../shared/pages/NotFoundPage'
 import { AppLayout } from './AppLayout'
 
@@ -21,15 +25,15 @@ export const router = createBrowserRouter([
           },
           {
             path: 'new',
-            element: <ProductPendingPage title="Novo produto" />,
+            element: <ProductCreateRoute />,
           },
           {
             path: ':productId',
-            element: <ProductPendingPage title="Detalhes do produto" />,
+            element: <ProductDetailsRoute />,
           },
           {
             path: ':productId/edit',
-            element: <ProductPendingPage title="Editar produto" />,
+            element: <ProductEditRoute />,
           },
         ],
       },

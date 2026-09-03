@@ -28,6 +28,7 @@ const defaultProps = {
   isError: false,
   onRetry: vi.fn(),
   onPageChange: vi.fn(),
+  onDelete: vi.fn(),
 }
 
 describe('ProductListContent', () => {
