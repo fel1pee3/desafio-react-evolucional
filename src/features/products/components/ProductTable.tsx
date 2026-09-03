@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { formatCurrency } from '../../../shared/utils/currency'
 import {
   isProductCategory,
@@ -9,9 +9,13 @@ import { ProductStatusBadge } from './ProductStatusBadge'
 
 type ProductTableProps = {
   products: Product[]
+  onDelete: (product: Product) => void
 }
 
-export function ProductTable({ products }: ProductTableProps) {
+export function ProductTable({ products, onDelete }: ProductTableProps) {
+  const location = useLocation()
+  const returnPath = `${location.pathname}${location.search}`
+
   return (
     <div className="product-table-wrapper">
       <table className="product-table">
@@ -63,6 +67,7 @@ export function ProductTable({ products }: ProductTableProps) {
                   <Link
                     className="table-action"
                     to={`/products/${product.id}`}
+                    state={{ from: returnPath }}
                     aria-label={`Visualizar ${product.name}`}
                   >
                     Visualizar
@@ -70,10 +75,19 @@ export function ProductTable({ products }: ProductTableProps) {
                   <Link
                     className="table-action"
                     to={`/products/${product.id}/edit`}
+                    state={{ from: returnPath }}
                     aria-label={`Editar ${product.name}`}
                   >
                     Editar
                   </Link>
+                  <button
+                    className="table-action table-action--danger"
+                    type="button"
+                    aria-label={`Excluir ${product.name}`}
+                    onClick={() => onDelete(product)}
+                  >
+                    Excluir
+                  </button>
                 </div>
               </td>
             </tr>
