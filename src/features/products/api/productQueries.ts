@@ -51,6 +51,8 @@ export function useProductQuery(productId: number | null) {
       return getProductById(productId, signal)
     },
     enabled: productId !== null,
+    retry: (failureCount, error) =>
+      error.status !== 404 && failureCount < 1,
   })
 }
 

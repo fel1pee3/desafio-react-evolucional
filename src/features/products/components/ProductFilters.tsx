@@ -48,6 +48,7 @@ export function ProductFilters({
             <button
               className="search-field__clear"
               type="button"
+              aria-label="Limpar busca"
               onClick={onClearSearch}
             >
               Limpar

@@ -1,8 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { formatCurrency } from '../../../shared/utils/currency'
 import {
-  isProductCategory,
-  PRODUCT_CATEGORY_LABELS,
+  getProductCategoryLabel,
 } from '../constants/productCategories'
 import type { Product } from '../types/product'
 import { ProductStatusBadge } from './ProductStatusBadge'
@@ -39,9 +38,7 @@ export function ProductTable({ products, onDelete }: ProductTableProps) {
                 {product.name}
               </th>
               <td>
-                {isProductCategory(product.category)
-                  ? PRODUCT_CATEGORY_LABELS[product.category]
-                  : product.category}
+                {getProductCategoryLabel(product.category)}
               </td>
               <td className="product-table__price">
                 {formatCurrency(product.price)}
